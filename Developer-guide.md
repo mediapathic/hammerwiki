@@ -1,6 +1,9 @@
 ## Preliminaries
 Explain what the arena allocator (`HAllocator`) is for, and how to use it, since it's going to come up a lot. The `HACKING` file will be useful here.
 
+## Style conventions
+stdint.h is your friend, and other things we should really have some kind of checkstyle template for anyway
+
 ## Extending Hammer
 ### Adding new combinators
 * Combinators are declared in src/hammer.h and defined in src/parsers/
