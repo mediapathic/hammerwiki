@@ -1,6 +1,8 @@
-Here are some ways people might want to extend Hammer. 
+## Preliminaries
+Explain what the arena allocator (`HAllocator`) is for, and how to use it, since it's going to come up a lot. The `HACKING` file will be useful here.
 
-## Adding new combinators
+## Extending Hammer
+### Adding new combinators
 * Combinators are declared in src/hammer.h and defined in src/parsers/
 * Declaration is done with the `HAMMER_FN_DECL` family of macros (see hammer.h)
 * What gets declared is a function that returns an `HParser*`; this function needs to call a corresponding `__m` function that calls `h_new_parser` to instantiate an `HParser*` with the combinator's vtable. Example, suitable for boilerplate:
@@ -36,7 +38,7 @@ h_new_parser expects its third argument to be a void*; if a combinator has more 
     * Signature: `static void foo_ctrvm(HRVMProg *prog, void *env)`
     * converts an `HParser*` to a corresponding set of instructions for the regex VM. Those are defined in src/backends/regex.h.
 
-## Adding new parsing backends
+### Adding new parsing backends
 * declare a new `extern HParserBackendVTable` in internal.h with the existing ones
 * add it to the `HParserBackend` enum in hammer.h
 * add it to `*backends` in hammer.c
@@ -51,4 +53,4 @@ h_new_parser expects its third argument to be a void*; if a combinator has more 
     * Signature: `void h_bar_free(HParser *parser)`
     * for cleaning up anything that `.compile` created
 
-## Adding new language bindings
+### Adding new language bindings
