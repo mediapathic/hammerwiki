@@ -37,5 +37,18 @@ h_new_parser expects its third argument to be a void*; if a combinator has more 
     * converts an `HParser*` to a corresponding set of instructions for the regex VM. Those are defined in src/backends/regex.h.
 
 ## Adding new parsing backends
+* declare a new `extern HParserBackendVTable` in internal.h with the existing ones
+* add it to the `HParserBackend` enum in hammer.h
+* add it to `*backends` in hammer.c
+* the vtable in your backend implementation is a struct which must define the following members, all function pointers:
+  * `.compile`
+    * Signature: `int h_bar_compile(HAllocator* mm__, HParser* parser, const void* params)`
+    * does any setup work for using this backend (e.g., generating parse tables)
+    * returns 0 on success, -1 on failure
+  * `.parse`
+    * Signature: `HParseResult *h_bar_parse(HAllocator* mm__, const HParser* parser, HInputStream* stream)`
+  * `.free`
+    * Signature: `void h_bar_free(HParser *parser)`
+    * for cleaning up anything that `.compile` created
 
 ## Adding new language bindings
