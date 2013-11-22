@@ -62,17 +62,25 @@ Bindings live in src/bindings/LANGUAGE, and each such directory must have its ow
 
 Template:
 
-`Import('env')` # and any other symbols you might need that were declared in `SConstruct` or `src/SConscript`
+`Import('env')` 
+
+Import the environment as declared by the SConstruct. Add any other symbols you might need that were declared in `SConstruct` or `src/SConscript`, e.g. `Import('env libhammer_shared')`
+
 `localenv = env.Clone(IMPLICIT_COMMAND_DEPENDENCIES = 0)`
+
+Clone the environment, so that changes that need to be made for this part of the build don't affect other parts.
+
 `localenv.Append(...)` # CPPPATH, CFLAGS, LDFLAGS, whatever
 
-Set up your target, `local_target`, with the appropriate builder (usually `Command()` or `SharedLibrary()`):
+Add environment variables, compiler flags, &c for this part of the build.
 
 `local_target = localenv.SharedLibrary(sources)`
 
-Then declare it as the default target:
+Set up your target, `local_target`, with the appropriate builder (usually `Command()` or `SharedLibrary()`).
 
 `Default(local_target)`
+
+Then declare it as the default target.
 
 For tests, clone a new environment, set up a target, then alias it to the "test" target using the Alias builder:
 
