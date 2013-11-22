@@ -57,3 +57,23 @@ h_new_parser expects its third argument to be a void*; if a combinator has more 
     * for cleaning up anything that `.compile` created
 
 ### Adding new language bindings
+#### Build scripts
+Bindings live in src/bindings/LANGUAGE, and each such directory must have its own SConscript.
+
+Template:
+
+`Import('env')` # and any other symbols you might need that were declared in `SConstruct` or `src/SConscript`
+`localenv = env.Clone(IMPLICIT_COMMAND_DEPENDENCIES = 0)`
+`localenv.Append(...)` # CPPPATH, CFLAGS, LDFLAGS, whatever
+
+Set up your target, `local_target`, with the appropriate builder (usually `Command()` or `SharedLibrary()`):
+
+`local_target = localenv.SharedLibrary(sources)`
+
+Then declare it as the default target:
+
+`Default(local_target)`
+
+For tests, clone a new environment, set up a target, then alias it to the "test" target using the Alias builder:
+
+`testenv.Alias("test", test_target)`
