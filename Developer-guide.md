@@ -6,7 +6,7 @@ stdint.h is your friend, and other things we should really have some kind of che
 
 ## Extending Hammer
 ### Adding new combinators
-* Combinators are declared in src/hammer.h and defined in src/parsers/
+* Combinators are declared in src/hammer.h, defined in src/parsers/, and listed under the 'parsers' key in src/SConscript.
 * Declaration is done with the `HAMMER_FN_DECL` family of macros (see hammer.h)
 * What gets declared is a function that returns an `HParser*`; this function needs to call a corresponding `__m` function that calls `h_new_parser` to instantiate an `HParser*` with the combinator's vtable. Example, suitable for boilerplate:
 
@@ -45,6 +45,7 @@ h_new_parser expects its third argument to be a void*; if a combinator has more 
 * declare a new `extern HParserBackendVTable` in internal.h with the existing ones
 * add it to the `HParserBackend` enum in hammer.h
 * add it to `*backends` in hammer.c
+* add it to the 'backends' list in src/SConscript
 * the vtable in your backend implementation is a struct which must define the following members, all function pointers:
   * `.compile`
     * Signature: `int h_bar_compile(HAllocator* mm__, HParser* parser, const void* params)`
@@ -85,3 +86,5 @@ Then declare it as the default target.
 For tests, clone a new environment, set up a target, then alias it to the "test" target using the Alias builder:
 
 `testenv.Alias("test", test_target)`
+
+The list of supported bindings is near the top of the SConstruct: `vars.Add(ListVariable('bindings', ...))` Add the name of the language you're binding to this list (it must also be the name of the directory you added to src/bindings) otherwise SCons won't be able to find it.
