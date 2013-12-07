@@ -64,7 +64,7 @@ Bindings live in src/bindings/LANGUAGE, and each such directory must have its ow
 Template:
 
 ##### Building
-Import the environment as declared by the SConstruct. Add any other symbols you might need that were declared in `SConstruct` or `src/SConscript`. These are usually as follows:
+Import the environment as declared by the SConstruct. Add any other symbols you might need that were exported in `SConstruct` or `src/SConscript`. These are usually as follows:
 
     Import('env libhammer_shared testruns targets')
 
