@@ -63,28 +63,53 @@ Bindings live in src/bindings/LANGUAGE, and each such directory must have its ow
 
 Template:
 
-`Import('env')` 
+##### Building
+Import the environment as declared by the SConstruct. Add any other symbols you might need that were declared in `SConstruct` or `src/SConscript`. These are usually as follows:
 
-Import the environment as declared by the SConstruct. Add any other symbols you might need that were declared in `SConstruct` or `src/SConscript`, e.g. `Import('env libhammer_shared')`
-
-`localenv = env.Clone(IMPLICIT_COMMAND_DEPENDENCIES = 0)`
+    Import('env libhammer_shared testruns targets')
 
 Clone the environment, so that changes that need to be made for this part of the build don't affect other parts.
 
-`localenv.Append(...)` # CPPPATH, CFLAGS, LDFLAGS, whatever
+    exampleenv = env.Clone(IMPLICIT_COMMAND_DEPENDENCIES = 0)
 
 Add environment variables, compiler flags, &c for this part of the build.
 
-`local_target = localenv.SharedLibrary(sources)`
+    exampleenv.Append(...)` # CPPPATH, CFLAGS, LDFLAGS, whatever
 
-Set up your target, `local_target`, with the appropriate builder (usually `Command()` or `SharedLibrary()`).
+Set up your target, `exampletarget`, with the appropriate builder (usually `Command()` or `SharedLibrary()`).
 
-`Default(local_target)`
+    exampletarget = exampleenv.SharedLibrary(sources)
 
 Then declare it as the default target.
 
-For tests, clone a new environment, set up a target, then alias it to the "test" target using the Alias builder:
+    Default(exampletarget)
 
-`testenv.Alias("test", test_target)`
+##### Testing
+Clone a test environment from your build environment, set up a target, then alias it to the "test" target using the Alias builder:
+
+    exampletest = testenv.Alias("test", [exampletesttarget], exampletesttarget)
+
+Then tell it to `AlwaysBuild()`, so that `scons test` will always run tests even if they're already up to date:
+
+    AlwaysBuild(exampletest)
+
+And add the target to the list of tests to run:
+
+    testruns.append(exampletest)
 
 The list of supported bindings is near the top of the SConstruct: `vars.Add(ListVariable('bindings', ...))` Add the name of the language you're binding to this list (it must also be the name of the directory you added to src/bindings) otherwise SCons won't be able to find it.
+
+##### Installing
+Using the build environment you created, set up your install target with the appropriate builder (usually `Command()`):
+
+    exampleinstallexec = exampleenv.Command(...)
+
+If the language you're binding has its own installation utilities, like Python's distutils or Perl's MakeMaker, use those for maximum cross-platform compatibility.
+
+Then use the Alias builder to add your target to the `install` alias:
+
+    exampleinstall = Alias('installexample', [exampleinstallexec], exampleinstallexec)
+
+Then add the it to the list of targets to install:
+
+    targets.append(exampleinstall)
