@@ -1,9 +1,4 @@
-This is the preliminary user documentation for Hammer.  It has received
-tentative approval from the Powers That Be, pending a more thorough vetting,
-but it will hopefully be good enough to get you started.  The particularly
-potentially-fragile bits are noted.
-
-# Intro
+# Introduction
 
 ## What's a parser combinator?
 
@@ -50,7 +45,7 @@ already present in Hammer as well as the various combinators that exist for
 composing parsers.  We'll also cover more advanced topics such as making
 parsers return values other than the raw token bytes that were parsed.
 
-## Tool prereqs
+## Tool prerequisites
 
 You'll need `git` to download the Hammer source code, `scons` (and, by
 extension, Python) to configure it, and a working C toolchain to compile it.
