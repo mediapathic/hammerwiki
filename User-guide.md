@@ -63,9 +63,9 @@ This part is easy:
     $ sudo scons install
 
 Hammer will be installed into `/usr/local/` by default.  If you want to change
-that, use the `--prefix` parameter to `scons`, like so:
+that, use the `prefix` parameter to `scons install`, like so:
 
-    $ scons --prefix=/path/to/install/hammer
+    $ scons install prefix=/path/to/install/hammer
 
 # Hammer
 
