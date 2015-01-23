@@ -570,7 +570,7 @@ because `x` has yet to be defined when you're using it as a parameter to
 declaration of `x` using `h_indirect`, create a parser containing a reference
 to `x`, then bind that parser back to `x` using `h_bind_indirect`.
 
-    HParser *x = h_bind_indirect();
+    HParser *x = h_indirect();
     HParser *foo = h_choice(x, y, z, NULL);
     h_bind_indirect(x, foo);
 
