@@ -1,49 +1,28 @@
-# Introduction
+# Introduction #
 
-## What's a parser combinator?
+## What's a parser combinator? ##
 
-Hammer is a parser-combinator library; what does that even mean?  The obvious
-answer is that it's a library that allows one to combine parsers... in this
-case, that's precisely what it is, but why is this useful?  A few reasons, for
-starters: many people find it easier to think in terms of parser building
-blocks like those provided by Hammer, thus producing parser code that is more
-reliable and more understandable, often in less time; also, because parser
-composition is a central aspect, reusing parser code between projects is dead
-easy.
+Hammer is a parser-combinator library. But what does that even mean?
 
-In the Hammer world, parsers can be divided up into two classes: _primitive
-parsers_ that match a specific, literal token and _combinators_ that take one
-or more other parsers and combine them in interesting ways.  For instance, one
-could create a parser `alpha` that matches a single lowercase alphabetic
-character:
+The simplest answer is that it's a library that allows you to easily build complex parsers out of simpler or more granular ones. The end result is code that is more readable, reliable, and reusable, and is often produced in less time.
+
+Let's start with an example:
+
+In the Hammer world, parsers can be divided up into two classes: primitive parsers that match a specific, literal token and combinators that take one or more other parsers and combine them in interesting ways. For instance, one could create a parser `alpha` that matches a single lowercase alphabetic character:
 
     HParser *alpha = h_ch_range('a', 'z');
-
-And then use a combinator to create a parser for a single word, defined as a
-consecutive sequence of at least one of the previously-defined `alpha`:
+    
+And then use a combinator to create a parser for a single word, defined as a consecutive sequence of at least one of the previously-defined `alpha`:
 
     HParser *word = h_many1(alpha);
-
-Now comes the really great bit: note that both of these are of type `HParser`,
-the powerful implication being that our `word` parser can *also* be fed to a
-combinator to create an even bigger, badder parser; for example, we might
-define a sentence as a sequence of words, separated by spaces, ending with a
-full stop:
+    
+Now comes the really great bit: note that both of these are of type HParser, the powerful implication being that our `word` parser can also be fed to a combinator to create an even bigger, badder parser; for example, we might define a sentence as a sequence of words, separated by spaces, ending with a full stop:
 
     HParser *sentence = h_sequence(h_sepBy1(word, h_ch(' ')), h_ch('.'));
 
-We'll get into the details of `h_sequence` and `h_sepBy1` in a later section;
-the important thing note here is that the prose description of how we want the
-parser to work and the code that implements that parser are shockingly
-similar.  Thus, creating parsers with Hammer becomes a task of finding (or
-creating) the literal parsers you want and then finding (or creating)
-combinators that hook them together in a way that achieves the overarching
-goal.
+We'll get into the details of `h_sequence` and `h_sepBy1` in a later section; the important thing note here is that the prose description of how we want the parser to work and the code that implements that parser are shockingly similar. Thus, creating parsers with Hammer becomes a task of finding (or creating) the literal parsers you want and then finding (or creating) combinators that hook them together in a way that achieves the overarching goal.
 
-In the following sections, we'll cover the selection of literal parsers
-already present in Hammer as well as the various combinators that exist for
-composing parsers.  We'll also cover more advanced topics such as making
-parsers return values other than the raw token bytes that were parsed.
+In the following sections, we'll cover the selection of literal parsers already present in Hammer as well as the various combinators that exist for composing parsers. We'll also cover more advanced topics such as making parsers return values other than the raw token bytes that were parsed.
 
 ## Tool prerequisites
 
@@ -160,7 +139,7 @@ initially parsing just a string literal, then we modified it using the
 going to look at how to interpret the results of parses, beyond just the "did
 it succeed?" test in our first example.
 
-## Fun with parse results
+## Fun with parse results 
 
 In the previous examples, we only cared whether the parse was successful or
 not; we didn't feel the need to examine or interpret or otherwise use the
@@ -374,8 +353,8 @@ with the data given at rule creation time).  If `predicate` returns true,
 `verified_parser` will indicate parse failure.
 
 Just like actions, Hammer provides some macros to make attaching validation
-functions easy; they're also detailed in the "Shorthand notation for
-instantiating parsers" section below.
+functions easy; they're also detailed in the "[Shorthand notation for
+instantiating parsers](https://github.com/UpstandingHackers/hammer/wiki/User-guide#shorthand-notation-for-instantiating-parsers)" section below.
 
 
 ### User-defined parse result types
@@ -637,10 +616,7 @@ Should one of the tests fail, `g_test_run` will by default terminate the
 entire run.  If instead you want it to continue to run the rest of the tests,
 invoke your program with the `-k` parameter ("keep going").
 
-In addition to `g_check_cmp_uint32`, a bunch more wrapper functions are
-provided in `test_suite.h`.  Refer to that file in the Hammer distribution and
-to the [`glib` reference
-manual](https://developer.gnome.org/glib/stable/glib-Testing.html) for more.
+In addition to `g_check_cmp_uint32`, a bunch more wrapper functions are provided in `test_suite.h`.  Refer to that file in the Hammer distribution and to the [`glib` reference manual](https://developer.gnome.org/glib/stable/glib-Testing.html) for more.
 
 
 # Primitive parsers
@@ -975,3 +951,28 @@ Given a parser `p` whose return type is either `TT_SINT` or `TT_UINT`, applies
 
 Where `intrange` is a function that returns true if and only if the given
 integer lies between `lower` and `upper`, inclusive.
+
+### HParser *h_with_endianness(char endianness, const HParser p)
+
+Runs its argument parser with the given endianness setting. The value of "endianness" should be a bit-wise OR of the constants BYTE_BIG_ENDIAN/BYTE_LITTLE_ENDIAN and BIT_BIG_ENDIAN/BIT_LITTLE_ENDIAN. On success, returns the result of `p`
+
+### HParser *h_put_value (const HParser *p, const char* name)
+
+Stashes the result of the parser it wraps in a symbol table in the parse state, so that nonlocal actions and predicates can access this value. Returns p's token type if the name was not already in the symbol table. If the name already exists, returns a NULL (and thus a parse failure). 
+
+Try not to use this combinator if you can avoid it. 
+
+### HParser *h_get_value (const char* name)
+
+Retrieves a named HParseResult that was previously stashed in the parse state. Returns whatever the stashed HParseResult is, if present. If no result, returns NULL (and thus a parse failure)
+
+Try not to use this combinator if you can avoid it.
+
+### HParser *h_bind (const HParser *p, HContinuation k, void *env)
+
+Monadic bind for HParsers, i.e.: Sequencing where later parsers may depend on result(s) of earlier ones. 
+
+Run p and call the result x. Then run k(env,x).  Fail if p fails or if k(env,x) fails or if k(env,x) is NULL.
+
+Result: the result of k(x,env).
+
