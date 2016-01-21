@@ -952,23 +952,23 @@ Given a parser `p` whose return type is either `TT_SINT` or `TT_UINT`, applies
 Where `intrange` is a function that returns true if and only if the given
 integer lies between `lower` and `upper`, inclusive.
 
-### HParser *h_with_endianness(char endianness, const HParser p)
+### `HParser *h_with_endianness(char endianness, const HParser p)`
 
 Runs its argument parser with the given endianness setting. The value of "endianness" should be a bit-wise OR of the constants BYTE_BIG_ENDIAN/BYTE_LITTLE_ENDIAN and BIT_BIG_ENDIAN/BIT_LITTLE_ENDIAN. On success, returns the result of `p`
 
-### HParser *h_put_value (const HParser *p, const char* name)
+### `HParser *h_put_value (const HParser *p, const char* name)`
 
 Stashes the result of the parser it wraps in a symbol table in the parse state, so that nonlocal actions and predicates can access this value. Returns p's token type if the name was not already in the symbol table. If the name already exists, returns a NULL (and thus a parse failure). 
 
 Try not to use this combinator if you can avoid it. 
 
-### HParser *h_get_value (const char* name)
+### `HParser *h_get_value (const char* name)`
 
 Retrieves a named HParseResult that was previously stashed in the parse state. Returns whatever the stashed HParseResult is, if present. If no result, returns NULL (and thus a parse failure)
 
 Try not to use this combinator if you can avoid it.
 
-### HParser *h_bind (const HParser *p, HContinuation k, void *env)
+### `HParser *h_bind (const HParser *p, HContinuation k, void *env)`
 
 Monadic bind for HParsers, i.e.: Sequencing where later parsers may depend on result(s) of earlier ones. 
 
