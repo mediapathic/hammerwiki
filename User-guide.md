@@ -1,6 +1,6 @@
-# Introduction #
+# Introduction 
 
-## What's a parser combinator? ##
+## What's a parser combinator?
 
 Hammer is a parser-combinator library. But what does that even mean?
 
